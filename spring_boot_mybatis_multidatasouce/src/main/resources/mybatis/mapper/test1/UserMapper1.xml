@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.spring_boot_mybatis_multidatasouce.imp.mapper1.UserMappers1">
+    <!--返回数据的结果需指定对应的结果的实体，否则会报错-->
+    <resultMap id="baseResultMap" type="com.example.spring_boot_mybatis_multidatasouce.entity.UserEntity">
+        <!--column :表示数据库的类型;property :表示实体的类型-->
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="userName" property="userName" jdbcType="VARCHAR"/>
+        <result column="passWord" property="passWord" jdbcType="VARCHAR"/>
+        <result column="nick_name" property="nickName" jdbcType="VARCHAR"/>
+        <result column="user_sex" property="userSex" jdbcType="VARCHAR" javaType="com.example.spring_boot_mybatis_multidatasouce.enumer.UserSexEnum"/>
+    </resultMap>
+    <!--指定了对应的列 -->
+    <sql id="Base_Column_List">
+        id,userName,passWord,user_sex,nick_name
+    </sql>
+    <sql id="usetName_Column">
+        userName
+    </sql>
+    <!--resultMap :返回结果类型，可以是实体，可以是自己预定义的结果；比如list。map-->
+    <select id="getAll" resultMap="baseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM users
+    </select>
+    <!--parameterType 参数类型-->
+    <select id="getOne" parameterType="java.lang.Long" resultMap="baseResultMap">
+      SELECT
+      <include refid="Base_Column_List"/>
+      FROM users where id = #{id}
+    </select>
+    <select id="getUserName" parameterType="java.lang.Long" resultMap="baseResultMap">
+      SELECT USERNAME
+        from USERS WHERE  ID =#{id}
+    </select>
+    <!--useGeneratedKeys：生成key-->
+    <insert id="insert" useGeneratedKeys="true" parameterType="com.example.spring_boot_mybatis_multidatasouce.entity.UserEntity">
+        insert INTO  USERS (USERNAME, PASSWORD, USER_SEX)
+          VALUES
+        (#{userName},#{passWord},#{userSex})
+
+    </insert>
+    <update id="update" parameterType="com.example.spring_boot_mybatis_multidatasouce.entity.UserEntity">
+        UPDATE  USERS SET
+        <if test="userName !=null">USERNAME =#{userName},</if>
+        <if test="passWord != null">PASSWORD = #{passWord},</if>
+        NICK_NAME = #{nickName}
+        WHERE id = #{id}
+    </update>
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM USERS WHERE ID = #{id}
+
+    </delete>
+</mapper>
